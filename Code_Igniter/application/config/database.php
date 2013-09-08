@@ -43,7 +43,7 @@ $active_record = TRUE;
 
 $db['default']['hostname'] = 'localhost';
 $db['default']['username'] = 'enketo';
-$db['default']['password'] = '';
+$db['default']['password'] = 'enketo';
 $db['default']['database'] = 'enketo';
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';

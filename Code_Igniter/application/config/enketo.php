@@ -26,18 +26,19 @@ $config['integration_with_url'] = "http://google.com";
 /**
  * Will be used to direct users throughout application
  */
-$config['support_email'] = "support@formhub.org";
+$config['support_email'] = "aklogbook@ecotrust.org";
 
 /**
  * In the webform view this is the brand name shown (empty = enketo)
  */
-$config['brand'] = "";
+$config['brand'] = "Alaska Logbook";
 
 /**
  * OpenRosa servers that are allowed to connect
  */
 $config['openrosa_domains_allowed'] = array(
-	array('url' => '(www\.|dev\.)?formhub\.org\/?(martijnr|formhub_u)?', 'api_token' => 'abcde'),
+	//array('url' => '(www\.|dev\.)?formhub\.org\/?(martijnr|formhub_u)?', 'api_token' => 'abcde'),
+    array('url' => 'localhost', 'api_token' => 'abcde'),
 );
 
 /**
