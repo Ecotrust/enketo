@@ -7,7 +7,6 @@
 */libraries/xpathjs_javarosa.min.js
 sftp-config.json
 .sass-cache
-public/js-source
 Code_Igniter/application/config/database.php
 Code_Igniter/application/cache/*
 Code_Igniter/application/logs/*
