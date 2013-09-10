@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS `properties` (
   `xsl_version` int(11) NOT NULL,
   `form_xsl_hash` varchar(32) NOT NULL,
   `model_xsl_hash` varchar(32) NOT NULL,
+  `forms_launched` varchar(32) NOT NULL,
   PRIMARY KEY (`xsl_version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
