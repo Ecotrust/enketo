@@ -1,15 +1,15 @@
-[submodule "public/libraries/xpathjs_javarosa"]
-	path = public/libraries/xpathjs_javarosa
+[submodule "lib/xpath"]
+	path = lib/xpath
 	url = https://github.com/MartijnR/xpathjs_javarosa.git
-[submodule "lib/phantom-jasmine"]
-	path = lib/phantom-jasmine
-	url = https://github.com/jcarver989/phantom-jasmine.git
-[submodule "public/libraries/bootstrap-datepicker"]
-	path = public/libraries/bootstrap-datepicker
+[submodule "lib/text"]
+	path = lib/text
+	url = https://github.com/requirejs/text.git
+[submodule "lib/file-manager"]
+	path = lib/file-manager
+	url = https://github.com/MartijnR/file-manager.git
+[submodule "src/widget/date/bootstrap-datepicker"]
+	path = src/widget/date/bootstrap-datepicker
 	url = https://github.com/eternicode/bootstrap-datepicker.git
-[submodule "Code_Igniter/system"]
-	path = Code_Igniter/system
-	url = https://github.com/MartijnR/CodeIgniter_system.git
-[submodule "public/libraries/bootstrap-timepicker"]
-	path = public/libraries/bootstrap-timepicker
+[submodule "src/widget/time/bootstrap-timepicker"]
+	path = src/widget/time/bootstrap-timepicker
 	url = https://github.com/jdewit/bootstrap-timepicker.git
