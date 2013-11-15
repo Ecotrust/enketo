@@ -1,7 +1,6 @@
 $baseFontSize: 15px;
 $baseLineHeight: 20px;
-$iconSpritePath: '/images/glyphicons-halflings.png'; //patches bug in bootstrap-sass
-$iconWhiteSpritePath: '/images/glyphicons-halflings-white.png'; //patches bug in bootstrap-sass
+
 
 @mixin font-bold {
   @include default-bold; }
@@ -9,6 +8,8 @@ $iconWhiteSpritePath: '/images/glyphicons-halflings-white.png'; //patches bug in
 @mixin font-normal {
   @include default-normal; }
 
-@import "_main";
-@import "_responsive";
-@import "_form";
+@import "main";
+@import "side-slider";
+@import "form";
+@import "form_header";
+@import "responsive";

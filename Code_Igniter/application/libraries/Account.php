@@ -44,7 +44,7 @@ class Account {
     public function logo_url($bla=NULL)
     {
         if ($this->CI->config->item('brand') === 'formhub') {
-            return "/images/formhub_160x29.png";
+            return "/images/logo-black.png";
         } else return "/private_media/images/enketo_bare_150x56.png";
     }
 
@@ -65,7 +65,7 @@ class Account {
         }
 
     	foreach ($domains_allowed as $domain_allowed){
-    		if (preg_match('/^https?:\/\/'.strtolower(trim($domain_allowed['url'])).'.*/' , strtolower(trim($server_url)))) {
+    		if (preg_match('/^https?:\/\/'.trim($domain_allowed['url']).'.*/' , trim($server_url))) {
     			return $domain_allowed['api_token'];
     		}
     	}

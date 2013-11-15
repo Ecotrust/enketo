@@ -20,36 +20,38 @@ class Webform extends CI_Controller {
 
     private $default_library_scripts = array
     (
-        '/libraries/jquery.min.js',
-        '/libraries/bootstrap/js/bootstrap.min.js', 
-        '/libraries/bootstrap-timepicker/js/bootstrap-timepicker.js',
-        '/libraries/bootstrap-datepicker/js/bootstrap-datepicker.js',
-        '/libraries/modernizr.min.js',
-        '/libraries/xpathjs_javarosa/build/xpathjs_javarosa.min.js',
-        '/libraries/FileSaver.min.js',
-        '/libraries/BlobBuilder.min.js'
+        '/libraries/enketo-core/lib/jquery.min.js',
+        '/libraries/enketo-core/lib/bootstrap.min.js', 
+        '/libraries/enketo-core/lib/bootstrap-timepicker/js/bootstrap-timepicker.js',
+        '/libraries/enketo-core/lib/bootstrap-datepicker/js/bootstrap-datepicker.js',
+        '/libraries/enketo-core/lib/modernizr.min.js',
+        '/libraries/enketo-core/lib/xpath/build/xpathjs_javarosa.min.js',
+        '/libraries/file-saver/FileSaver.js',
+        '/libraries/blob/Blob.js',
+        '/libraries/vkbeautify.js',
+        '/libraries/file-manager/src/files.js'
     );
     private $default_main_scripts = array
         (
             '/js-source/helpers.js',
             '/js-source/gui.js',
-            '/js-source/form.js',
-            '/js-source/widgets.js',
+            '/libraries/enketo-core/src/js/utils.js',
+            '/libraries/enketo-core/src/js/form.js',
+            '/libraries/enketo-core/src/js/widgets.js',
             '/js-source/storage.js',
-            '/js-source/files.js',
             '/js-source/connection.js',
             '/js-source/survey_controls.js',
             '/js-source/debug.js'
         ); 
     private $default_stylesheets = array
     (
-        array( 'href' => '/css/webform.css', 'media' => 'all'),
-        array( 'href' => '/css/webform_print.css', 'media' => 'print')
+        array( 'href' => '/build/css/webform.css', 'media' => 'all'),
+        array( 'href' => '/build/css/webform_print.css', 'media' => 'print')
     );
     private $default_iframe_stylesheets = array
     (
-        array( 'href' => '/css/webform_iframe.css', 'media' => 'all'),
-        array( 'href' => '/css/webform_print.css', 'media' => 'print')
+        array( 'href' => '/build/css/webform_iframe.css', 'media' => 'all'),
+        array( 'href' => '/build/css/webform_print.css', 'media' => 'print')
     );
     private $credentials = NULL;
 
@@ -58,6 +60,7 @@ class Webform extends CI_Controller {
         parent::__construct();
         $this->load->helper(array('subdomain','url', 'form'));
         $this->load->model('Survey_model','',TRUE);
+        $this->load->library('encrypt');
         $sub = get_subdomain();
         $suf = $this->Survey_model->ONLINE_SUBDOMAIN_SUFFIX;
         $this->subdomain = ($this->Survey_model->has_offline_launch_enabled()) 
@@ -118,8 +121,8 @@ class Webform extends CI_Controller {
         if (ENVIRONMENT === 'production') {
             $data['scripts'] = array
             (
-                '/libraries/libraries-all-min.js',
-                '/js-min/webform-all-min.js'
+                //'/libraries/libraries-all-min.js',
+                '/build/js/webform.min.js'
             );
         } else {       
             $data['scripts'] = array_merge
@@ -186,18 +189,19 @@ class Webform extends CI_Controller {
             'form_data'=> $form->default_instance,
             'form_data_to_edit' => $edit_obj->instance_xml,
             'return_url' => $edit_obj->return_url,
+            'offline_storage' => FALSE,
             'logo_url' => $this->account->logo_url($this->server_url),
             'stylesheets'=> $this->iframe ? array(
-                array( 'href' => '/css/webform_edit_iframe.css', 'media' => 'all'),
-                array( 'href' => '/css/webform_print.css', 'media' => 'print')
+                array( 'href' => '/build/css/webform_edit_iframe.css', 'media' => 'all'),
+                array( 'href' => '/build/css/webform_print.css', 'media' => 'print')
             ) : $this->default_stylesheets
         );
 
         if (ENVIRONMENT === 'production') {
             $data['scripts'] = array
             (
-                '/libraries/libraries-all-min.js',
-                '/js-min/webform-edit-all-min.js'
+                //'/libraries/libraries-all-min.js',
+                '/build/js/webform-edit.min.js'
             );
         } else {       
             $data['scripts'] = array_merge(
@@ -257,6 +261,7 @@ class Webform extends CI_Controller {
             'form_data'=> $form->default_instance,
             'form_data_to_edit' => NULL,
             'return_url' => '/webform/thanks',
+            'offline_storage' => FALSE,
             'stylesheets'=> $this->iframe ? $this->default_iframe_stylesheets : $this->default_stylesheets,
             'logo_url' => $this->account->logo_url($this->server_url),
             'logout' => $this->credentials !== NULL
@@ -265,8 +270,8 @@ class Webform extends CI_Controller {
         if (ENVIRONMENT === 'production') {
             $data['scripts'] = array
             (
-                '/libraries/libraries-all-min.js',
-                '/js-min/webform-single-all-min.js'
+                //'/libraries/libraries-all-min.js',
+                '/build/js/webform-single.min.js'
             );
         } else {       
             $data['scripts'] = array_merge
@@ -300,6 +305,7 @@ class Webform extends CI_Controller {
             'html_title'=> 'enketo webform preview',
             'form'=> '',
             'return_url' => NULL,
+            'offline_storage' => FALSE,
             'stylesheets'=> $this->iframe ? $this->default_iframe_stylesheets : $this->default_stylesheets,
             'logo_url' => !empty($params['server']) ? $this->account->logo_url($params['server']) : $this->account->logo_url(),
             'logout' => $this->credentials !== NULL
@@ -307,8 +313,8 @@ class Webform extends CI_Controller {
         if (ENVIRONMENT === 'production') {
             $data['scripts'] = array
             (
-                '/libraries/libraries-all-min.js',
-                '/js-min/webform-preview-all-min.js'
+                //'/libraries/libraries-all-min.js',
+                '/build/js/webform-preview.min.js'
             );
         } else {       
             $data['scripts'] = array_merge
@@ -348,7 +354,9 @@ class Webform extends CI_Controller {
         }
         
         $this->load->model('Form_model', '', TRUE);
-        $this->credentials = $this->form_auth->get_credentials();
+        $token = $this->input->get('token', TRUE);
+        $s = ($this->encrypt->decode($this->input->get('token', TRUE)) === 'localrequest') ? $this->input->get('s', TRUE) : NULL;
+        $this->credentials = $this->form_auth->get_credentials($s);
         $this->Form_model->setup($this->server_url, $this->form_id, $this->credentials, $this->form_hash_prev, $this->xsl_version_prev, $this->media_hash_prev);
         
         if($this->Form_model->requires_auth()) {
@@ -367,12 +375,9 @@ class Webform extends CI_Controller {
                 log_message('error', 'failed to obtain transformation result from database for '.$this->subdomain);
             }
         } else {
-            log_message('debug', 'form changed, form media changed, xslt stylesheets changed or form never transformed before, going to perform transformation');
+            //log_message('debug', 'form changed, form media changed, xslt stylesheets changed, form removed, or form never transformed before, going to perform transformation');
             $form = $this->Form_model->get_transform_result_obj();
-            if (!empty($form->html) && !empty($form->default_instance))
-            {
-                $this->Survey_model->update_transform_result($form);
-            }
+            $this->Survey_model->update_transform_result($form);
         }
         
         if (!empty($form->html) && !empty($form->default_instance)) {
@@ -412,7 +417,7 @@ class Webform extends CI_Controller {
     private function _online_only_check_route()
     {
         if ($this->Survey_model->has_offline_launch_enabled()) {
-            show_error('The iframe view can only be launched in online mode', 404);
+            show_error('The iframe view can only be launched in online-only mode', 404);
             return TRUE;
         }
         return FALSE;
@@ -422,6 +427,7 @@ class Webform extends CI_Controller {
     {
         if (isset($form->authenticate) && $form->authenticate) {
             if ($this->input->get('manifest') == 'true') {
+                log_message('debug', 'authentication not provided, sending empty string to manifest');
                 $this->output->set_output('');
             } else {
                 $this->_login($append);
@@ -443,7 +449,7 @@ class Webform extends CI_Controller {
     private function _form_null_check_route($form)
     {
         if ($form === NULL) {
-            log_message('error', 'Form could not be found or transformed');
+            //log_message('error', 'Form could not be found or transformed');
             show_error('Form not reachable (or an error occurred during transformation). ', 404);
             return TRUE;
         }

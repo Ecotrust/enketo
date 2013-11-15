@@ -68,7 +68,7 @@ class Survey_model extends CI_Model {
 
     public function get_form_submission_url()
     {
-        return strtolower($this->_get_item('submission_url'));
+        return $this->_get_item('submission_url');
     }
 
     public function get_webform_url_if_launched($server_url, $form_id, $options = array('type' => NULL))
@@ -160,6 +160,21 @@ class Survey_model extends CI_Model {
         return $this->_update_item('active' , FALSE);
     }
 
+    public function remove_unused_transform_results()
+    {
+         $values = array(
+            'transform_result_title'    => NULL,
+            'transform_result_model'    => NULL,
+            'transform_result_form'     => NULL,
+            'hash'                      => NULL,
+            'media_hash'                => NULL,
+            'xsl_version'               => NULL
+        );
+        $this->db->where('TIMESTAMPDIFF(MONTH, `last_accessed`, CURRENT_TIMESTAMP) >= 3', NULL, FALSE);
+        $query = $this->db->update('surveys', $values); 
+        return $this->db->affected_rows();  
+    }
+
     public function has_offline_launch_enabled()
     {
         return !$this->_has_subdomain_suffix();
@@ -211,12 +226,21 @@ class Survey_model extends CI_Model {
         return $this->_get_record_number($server_url, $active_only);
     }
 
+    public function number_submissions($server_url = NULL)
+    {
+        $this->remove_test_entries();
+        return $this->_get_submission_number($server_url);
+    }
+
     /**
      * Creates a unique ID (subdomain) for a form and writes this to the database
      * @return  {string} ID (subdomain)
      **/
     private function _launch($server_url, $form_id, $submission_url = NULL)
     {
+        if (strrpos($server_url, '/') === strlen($server_url)-1) {
+            $server_url = substr($server_url, 0, -1);
+        }
         if ($server_url && url_valid($server_url) && !empty($form_id)) {
             //TODO: CHECK URLS FOR LIVENESS?
             $existing_subdomain = $this->_get_subdomain($server_url, $form_id, NULL);
@@ -231,9 +255,9 @@ class Survey_model extends CI_Model {
             $submission_url = !empty($submission_url) ? $submission_url : $this->_get_submission_url($server_url);   
             $data = array(
                 'subdomain'         => $subdomain,
-                'server_url'        => strtolower($server_url),
+                'server_url'        => $server_url,
                 'form_id'           => $form_id,
-                'submission_url'    => strtolower($submission_url),
+                'submission_url'    => $submission_url,
                 'data_url'          => NULL,
                 'email'             => NULL,
                 'launch_date'       => date( 'Y-m-d H:i:s', time())
@@ -435,6 +459,9 @@ class Survey_model extends CI_Model {
     
     private function _get_subdomain($server_url, $form_id, $active = TRUE)
     {
+        if (strrpos($server_url, '/') === strlen($server_url)-1) {
+            $server_url = substr($server_url, 0, -1);
+        }
         $active_str = ($active == TRUE) ? ' AND active = 1' : '';
         $alt_server_url_1 = $this->_switch_protocol($server_url);
         $alt_server_url_2 = $this->_switch_www($server_url);
@@ -445,7 +472,7 @@ class Survey_model extends CI_Model {
         $this->db->or_where("server_url = '".$alt_server_url_2."' AND BINARY form_id = '".$form_id."'".$active_str);
         $this->db->or_where("server_url = '".$alt_server_url_3."' AND BINARY form_id = '".$form_id."'".$active_str);
         $query = $this->db->get('surveys', 1); 
-        //log_message('debug', $this->db->last_query());
+        log_message('debug', $this->db->last_query());
         if ($query->num_rows() === 1) {
             $row = $query->row_array();
             //log_message('debug', 'db query returned '.json_encode($row));
@@ -478,6 +505,7 @@ class Survey_model extends CI_Model {
         $query = $this->db->get('surveys', 1); 
         if ($query->num_rows() === 1) {
             $row = $query->row_array();
+            $this->_update_item('last_accessed', 'CURRENT_TIMESTAMP', FALSE);
             return $row;
         } else {
             log_message('error', 'db query for '.json_encode($items).' returned '.$query->num_rows().' results.');
@@ -489,7 +517,7 @@ class Survey_model extends CI_Model {
     {
         $this->_db_where_alt_server_urls($server_url, $active_only);
         $query = $this->db->get('surveys'); 
-        log_message('debug', 'query: '.$this->db->last_query());
+        //log_message('debug', 'query: '.$this->db->last_query());
         return $query->num_rows(); 
     }
 
@@ -500,6 +528,17 @@ class Survey_model extends CI_Model {
         $this->db->order_by('server_url', 'asc');
         $query = $this->db->get('surveys');
         return $query->result_array();
+    }
+
+    private function _get_submission_number($server_url = NULL)
+    {
+        $this->db->select('SUM(`submissions`) AS `submission_total`');
+        $query = $this->db->get('surveys');
+        if ($query->num_rows() === 1) {
+            $result = $query->row_array();
+            return (int) $result['submission_total'];
+        }
+        return NULL;
     }
 
     private function _db_where_alt_server_urls($server_url, $active_only)
@@ -519,7 +558,7 @@ class Survey_model extends CI_Model {
                 $this->db->or_where("server_url LIKE '".$alt_server_url_2."%'".$active_str);
                 $this->db->or_where("server_url LIKE'".$alt_server_url_3."%'".$active_str);
             }
-        } else { 
+        } else if ($active_only == TRUE) { 
             $this->db->where('active = 1'); 
         }
         return;
@@ -534,8 +573,7 @@ class Survey_model extends CI_Model {
         if ($this->db->affected_rows() > 0) {
             return TRUE;
         }
-        log_message('error', 'database update failed on record with subdomain '.$this->db_subdomain.' for field:'.$field.', value: '.$value);
-        log_message('debug', $this->db->last_query());
+        log_message('debug', 'failed datebase item update (maybe nothing to update) '.$this->db->last_query());
         return FALSE;   
     }
 
@@ -548,7 +586,7 @@ class Survey_model extends CI_Model {
             return TRUE;
         }
         
-        log_message('debug', 'failed database update '.$this->db->last_query());
+        log_message('debug', 'failed database items update (maybe nothing to update) '.$this->db->last_query());
         return FALSE;   
     }
 

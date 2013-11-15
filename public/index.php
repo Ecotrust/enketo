@@ -19,6 +19,7 @@
  *
  */
 	define('ENVIRONMENT', 'development');  # TODO 
+#	define('ENVIRONMENT', 'production');
 /*
  *---------------------------------------------------------------
  * ERROR REPORTING

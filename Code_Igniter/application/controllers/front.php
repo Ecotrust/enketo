@@ -34,12 +34,12 @@ class Front extends CI_Controller {
 	public function index()
 	{
 		$default_library_scripts = array(
-			'/libraries/jquery.min.js',
-			'/libraries/bootstrap/js/bootstrap.min.js',
-			'/libraries/modernizr.min.js'
+			'/libraries/enketo-core/lib/jquery.min.js',
+			'/libraries/enketo-core/lib/bootstrap.min.js',
+			'/libraries/enketo-core/lib/modernizr.min.js'
 		);
 		$default_main_scripts = array(
-			'/js-source/helpers.js',
+			'/libraries/enketo-core/src/js/utils.js',
 			'/js-source/gui.js',
 			'/js-source/connection.js',
 			'/js-source/front.js'
@@ -47,14 +47,14 @@ class Front extends CI_Controller {
 		$data = array(
 			'offline'			=> FALSE, 
 			'title_component'	=> 'home', 
-			'robots'     		=> TRUE,
-			'number_launched'	=> $this->_get_db_number_launched()
+			'robots'     		=> TRUE//,
+			//'number_launched'	=> $this->_get_db_number_launched()
 		);
 
 		if (ENVIRONMENT === 'production') {
 			$data['scripts'] = array(
-				'/libraries/libraries-all-min.js',
-				'/js-min/front-all-min.js'
+				//'/libraries/libraries-all-min.js',
+				'/build/js/front.min.js'
 			);
 		} else {
 			$data['scripts'] = array_merge(
@@ -65,17 +65,18 @@ class Front extends CI_Controller {
 		
 		if (strlen($this->config->item('integrated')) > 0) {
 			$data['stylesheets'] = array(
-				array( 'href' => '/css/front.css', 'media' => 'screen')
+				array( 'href' => '/build/css/front.css', 'media' => 'screen')
 			);
 			$this->load->view('front_view_bare', $data);
 		} else {
 			$data['stylesheets'] = array(
-				array( 'href' => '/css/private/front.css', 'media' => 'screen')
+				array( 'href' => '/build/css/private/front.css', 'media' => 'screen')
 			);
 			$this->load->view('private_views/front_view', $data);
 		}	
 	}
 
+	/*
 	public function get_number_launched() {
 		echo $this->_get_number_launched();
 	}
@@ -117,5 +118,6 @@ class Front extends CI_Controller {
 	private function _set_db_number_launched($number) {
 		$this->db->update('properties', array('forms_launched' => $number));
 	}
+	*/
 }
 ?>
