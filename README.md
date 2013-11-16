@@ -51,7 +51,8 @@ Development
 * [Issue Tracker on /mobilabs](https://github.com/modilabs/enketo/issues) and on [/martijnr](https://github.com/MartijnR/enketo/issues)
 
 Acknowledgements
-----------------
+------------------
+
 I would like to acknowledge and thank the indirect contribution by the creators of the following excellent works that were used in the project:
 
 * [Code Igniter](http://codeigniter.com) by EllisLab
