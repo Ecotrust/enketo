@@ -21,7 +21,7 @@ $config['google_analytics_key'] = "";
 /**
  * Used for various purposes, best to fill something in for now
  */
-$config['integration_with_url'] = "http://google.com";
+$config['integration_with_url'] = "http://aklogbook.ecotrust.org";
 
 /**
  * Will be used to direct users throughout application
