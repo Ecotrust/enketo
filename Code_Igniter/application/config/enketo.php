@@ -39,6 +39,8 @@ $config['brand'] = "Alaska Logbook";
 $config['openrosa_domains_allowed'] = array(
 	//array('url' => '(www\.|dev\.)?formhub\.org\/?(martijnr|formhub_u)?', 'api_token' => 'abcde'),
     array('url' => 'localhost', 'api_token' => 'abcde'),
+    array('url' => '127.0.0.1:8000', 'api_token' => 'abcde'),
+    array('url' => '127.0.0.1:8080', 'api_token' => 'abcde'),
 );
 
 /**
