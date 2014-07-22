@@ -21,7 +21,7 @@ $config['google_analytics_key'] = "";
 /**
  * Used for various purposes, best to fill something in for now
  */
-$config['integration_with_url'] = "http://aklogbook.ecotrust.org";
+$config['integration_with_url'] = "http://logbook.ecotrust.org";
 
 /**
  * Will be used to direct users throughout application
@@ -31,7 +31,7 @@ $config['support_email'] = "aklogbook@ecotrust.org";
 /**
  * In the webform view this is the brand name shown (empty = enketo)
  */
-$config['brand'] = "Alaska Logbook";
+$config['brand'] = "Logbook";
 
 /**
  * OpenRosa servers that are allowed to connect
@@ -40,7 +40,7 @@ $config['openrosa_domains_allowed'] = array(
 	//array('url' => '(www\.|dev\.)?formhub\.org\/?(martijnr|formhub_u)?', 'api_token' => 'abcde'),
     array('url' => 'localhost', 'api_token' => 'abcde'),
     array('url' => '127.0.0.1:8000', 'api_token' => 'abcde'),
-    array('url' => '127.0.0.1:8080', 'api_token' => 'abcde'),
+    array('url' => '127.0.0.1:8080', 'api_token' => 'abcde')
 );
 
 /**
