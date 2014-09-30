@@ -69,7 +69,17 @@ class Account {
     			return $domain_allowed['api_token'];
     		}
     	}
-    	//log_message('error', 'attempt was made to launch enketo form for dissallowed OpenRosa server URL or with invalid API token: '.$server_url.' : '.$api_token);
+        $msg = ' -- attempt was made to launch enketo form for dissallowed OpenRosa server URL or with invalid API token: \''.$server_url.'\' : \''.$api_token.'\'
+';
+        date_default_timezone_set('America/Los_Angeles');
+        $date = date('m/d/Y h:i:s a', time());
+    	// log_message('error', 'attempt was made to launch enketo form for dissallowed OpenRosa server URL or with invalid API token: '.$server_url.' : '.$api_token);
+        $logfile = fopen("/tmp/openrosa_log.txt", "a");
+        fwrite($logfile, $date);
+        fwrite($logfile, $msg);
+        fclose($logfile);
+        chmod("/tmp/openrosa_log.txt", 0666);
+
     	return NULL;
     }
 }
